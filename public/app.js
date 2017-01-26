@@ -8,6 +8,35 @@ window.onload = function(){
     request.send();
   }
 
+  var chartPopCountries = function(region){
+    console.log("region: "+ region.name)
+    console.log(region);
+    var countryPopData = []
+    for (country of region.countries){
+      countryPopData.push({name: country.name, data: [country.population]})
+    }
+    var regionPopObject = {
+      name: "Population of countries in " + region.name,
+      data: countryPopData,
+      labels: ["Population"]
+    };
+    var regionPopChart = new ColumnChart(regionPopObject);
+  }
+
+  var popCountriesByRegion = function(){
+    var regions = {}
+    for (country of countries){
+      if(regions[country.region] === undefined){
+        regions[country.region] = {name: country.region, countries: []};
+      }
+      regions[country.region].countries.push(country);
+    }
+    console.log(regions);
+    for(region in regions){
+    chartPopCountries(regions[region]);
+  }
+  }
+
   var makeCountryChart = function(){
     var countryPopData = []
     for (country of countries){
@@ -37,7 +66,7 @@ window.onload = function(){
     console.log('Request complete');
     if (this.status !== 200) return;
     countries = JSON.parse(this.responseText);
-    
+    popCountriesByRegion();
     var europeanCountries = [];
     for (country of countries){
       if (country.region === "Europe" && country.name !== "Russia"){
@@ -90,6 +119,8 @@ window.onload = function(){
       ],
       labels: ["Apple pie", "Dog"]
     };
+
+    
 
     var languageChart = new ColumnChart(chartData);
     var dodgyChart = new ColumnChart(chartData2);
